@@ -35,3 +35,4 @@ const noData = "No Internet";
 
 const rooms = "Rooms";
 const items = "Items";
+const search = "Search";
