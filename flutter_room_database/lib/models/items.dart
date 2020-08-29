@@ -6,6 +6,7 @@ class Items {
   String cWeight;
   String groupNameId;
   String density;
+  String roomId = "";
 
   Items(
       {this.cId,
@@ -14,7 +15,9 @@ class Items {
         this.cCubicFeet,
         this.cWeight,
         this.groupNameId,
-        this.density});
+        this.density,
+        this.roomId
+      });
 
   Items.fromJson(Map<String, dynamic> json) {
     cId = json['c_id'];
@@ -24,6 +27,7 @@ class Items {
     cWeight = json['c_weight'];
     groupNameId = json['group_name_id'];
     density = json['density'];
+    roomId = json['room_id'] ?? "";
   }
 
   Map<String, dynamic> toJson() {
@@ -35,6 +39,7 @@ class Items {
     data['c_weight'] = this.cWeight;
     data['group_name_id'] = this.groupNameId;
     data['density'] = this.density;
+    data['room_id'] = this.roomId;
     return data;
   }
 }

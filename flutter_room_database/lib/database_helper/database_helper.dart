@@ -37,23 +37,25 @@ class DatabaseHelper {
     // TABLE OF ROOM ITEMS
         await db.execute('''
               CREATE TABLE $itemTable (
-              $cId TEXT PRIMARY KEY,
+              $itemColId INTEGER PRIMARY KEY AUTOINCREMENT,
+              $cId TEXT NOT NULL,
               $cFieldName TEXT NOT NULL,
               $cComments TEXT,
               $cCubicFeet TEXT NOT NULL, 
               $cWeight TEXT NOT NULL,
               $groupNameId TEXT NOT NULL,
-              $density TEXT NOT NULL
+              $density TEXT NOT NULL,
+              $roomId TEXT NOT NULL
               )
         ''');
 
         // TABLE OF ROOM
         await db.execute('''
               CREATE TABLE $roomTable (
-              $roomId TEXT PRIMARY KEY,
+              $roomColId INTEGER PRIMARY KEY AUTOINCREMENT,
+              $roomId TEXT NOT NULL,
               $roomName TEXT NOT NULL,
-              $surveyId TEXT NOT NULL,
-              FOREIGN KEY ($cId) REFERENCES $itemTable($cId)
+              $surveyId TEXT NOT NULL
               )
         ''');
 
@@ -65,4 +67,15 @@ class DatabaseHelper {
     return await db.insert(tableName, row);
   }
 
+  // FETCH ROOMS
+  Future<List<Map<String, dynamic>>> fetchRooms() async {
+    Database db = await this.database;
+    return await db.query(roomTable);
+  }
+
+  // FETCH ITEMS FOR ROOM
+  Future<List<Map<String, dynamic>>> fetchRoomItems(String id) async {
+    Database db = await this.database;
+    return await db.rawQuery('SELECT * FROM $itemTable WHERE $roomId == $id');
+  }
 }
