@@ -1,5 +1,5 @@
 import 'package:flutterroomdatabase/models/categories.dart';
-import 'package:flutterroomdatabase/models/item_list.dart';
+import 'package:flutterroomdatabase/models/room_list.dart';
 import 'package:flutterroomdatabase/models/items.dart';
 
 class RoomResponse {
@@ -27,18 +27,18 @@ class RoomResponse {
 }
 
 class Data {
-  List<ItemList> itemsList;
+  List<RoomList> roomList;
   List<Categories> categories;
   List<Items> cp;
   List<Items> pbo;
 
-  Data({this.itemsList, this.categories, this.cp, this.pbo});
+  Data({this.roomList, this.categories, this.cp, this.pbo});
 
   Data.fromJson(Map<String, dynamic> json) {
     if (json['itemslist'] != null) {
-      itemsList = new List<ItemList>();
+      roomList = new List<RoomList>();
       json['itemslist'].forEach((v) {
-        itemsList.add(new ItemList.fromJson(v));
+        roomList.add(new RoomList.fromJson(v));
       });
     }
     if (json['categories'] != null) {
@@ -63,8 +63,8 @@ class Data {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.itemsList != null) {
-      data['itemslist'] = this.itemsList.map((v) => v.toJson()).toList();
+    if (this.roomList != null) {
+      data['itemslist'] = this.roomList.map((v) => v.toJson()).toList();
     }
     if (this.categories != null) {
       data['categories'] = this.categories.map((v) => v.toJson()).toList();

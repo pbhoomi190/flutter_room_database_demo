@@ -1,14 +1,14 @@
 import 'package:flutterroomdatabase/models/items.dart';
 
-class ItemList {
+class RoomList {
   String roomId;
   String roomName;
   String surveyId;
   List<Items> items;
 
-  ItemList({this.roomId, this.roomName, this.surveyId, this.items});
+  RoomList({this.roomId, this.roomName, this.surveyId, this.items});
 
-  ItemList.fromJson(Map<String, dynamic> json) {
+  RoomList.fromJson(Map<String, dynamic> json) {
     roomId = json['room_id'];
     roomName = json['room_name'];
     surveyId = json['survey_id'];
