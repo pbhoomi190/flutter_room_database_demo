@@ -4,6 +4,7 @@ import 'package:flutterroomdatabase/bloc/get_room_database_bloc.dart';
 import 'package:flutterroomdatabase/constants/strings.dart';
 import 'package:flutterroomdatabase/models/items.dart';
 import 'package:flutterroomdatabase/models/room_list.dart';
+import 'package:flutterroomdatabase/models/selected_items_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RoomItemScreen extends StatefulWidget {
@@ -110,6 +111,12 @@ class _RoomItemScreenState extends State<RoomItemScreen> {
         if(snapshot.hasData) {
           return ListView.builder(itemBuilder: (context, index) {
             return ListTile(
+              onTap: () {
+                if (!snapshot.data[index].isSelected) {
+                  snapshot.data[index].isSelected = true;
+                  _getRoomDatabaseBloc.addSelectedItemToList(snapshot.data[index], 1);
+                }
+              },
               title: Text(snapshot.data[index].cFieldName),
             );
           },
@@ -119,6 +126,37 @@ class _RoomItemScreenState extends State<RoomItemScreen> {
           return centerMessage(databaseFetchMessage);
         }
       },
+    );
+  }
+
+  Widget roomDataWidget() {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          dataTable(),
+          horizontalRoomScroller(),
+          Container(
+            margin: const EdgeInsets.only(bottom: 40),
+            height: _screenHeight * 0.4,
+              child: selectedItemListWidget()
+          ),
+          InkWell(
+            onTap: () {
+              _getRoomDatabaseBloc.saveItemToDatabase();
+            },
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 25, top: 10),
+              height: 40,
+              width: 100,
+              decoration: BoxDecoration(
+                color: Colors.green,
+                borderRadius: BorderRadius.all(Radius.circular(20))
+              ),
+              child: Center(child: Text(save)),
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -187,6 +225,111 @@ class _RoomItemScreenState extends State<RoomItemScreen> {
       );
   }
 
+  Widget selectedItemListWidget() {
+      return StreamBuilder<List<SelectedItems>>(
+        stream: _getRoomDatabaseBloc.selectedItemStream,
+        builder: (context, snapshot) {
+          if(snapshot.hasData && snapshot.data.length > 0) {
+            return ListView.builder(itemBuilder: (context, index) {
+              return selectedListItem(snapshot.data[index]);
+            },
+              itemCount: snapshot.data.length,
+            );
+          } else {
+            return centerMessage(noData);
+          }
+        }
+      );
+  }
+
+  Widget selectedListItem(SelectedItems selectedItems) {
+    TextEditingController countController = TextEditingController(text: '${selectedItems.quantity}');
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical:5.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Text(selectedItems.cFieldName),
+          Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.blueGrey)
+            ),
+            child: TextField(
+              controller: countController,
+              keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.done,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+              ),
+              onSubmitted: (text) {
+                var value = int.parse(text) ?? 1;
+                if (value != 0) {
+                  _getRoomDatabaseBloc.updateSelectedItem(selectedItems, value);
+                }
+              },
+            ),
+          ),
+          Text(selectedItems.density * selectedItems.quantity),
+          IconButton(
+            icon: Icon(Icons.delete, color: Colors.red,),
+            onPressed: () {
+              _getRoomDatabaseBloc.deleteSelectedItem(selectedItems);
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget horizontalRoomScroller() {
+      return Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 8, right: 8, bottom: 5),
+        child: Column(
+          children: <Widget>[
+            Container(
+              height: 70,
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 5),
+              child: ListView.builder(itemBuilder: (context, index) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.all(Radius.circular(26))
+                  ),
+                  child: FlatButton(
+                    child: Text("All items (1)"),
+                    onPressed: () {
+
+                    },
+                  ),
+                );
+              }, itemCount: 4,
+                scrollDirection: Axis.horizontal,
+              ),
+            ),
+            Divider(height: 1.5, color: Colors.blueGrey,),
+            Container(
+              height: 40,
+              color: Colors.grey,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Text(item),
+                  Text(quantity),
+                  Text(calculate),
+                  Text("")
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+  }
+
+
+
   // LIFECYCLE METHODS
 
   @override
@@ -213,7 +356,7 @@ class _RoomItemScreenState extends State<RoomItemScreen> {
       ),
       body: Stack(
         children: <Widget>[
-          isOfflineDataAvailable ? dataTable()  :
+          isOfflineDataAvailable ? roomDataWidget()  :
           _getRoomAPIBloc != null ? apiCallingWidget(_getRoomAPIBloc) : Center()
         ],
       ),

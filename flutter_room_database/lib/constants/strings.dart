@@ -5,6 +5,8 @@ const unknownRoute = "Unknown Error occurred while navigating to the screen";
 // Table names
 const roomTable = "room_table";
 const itemTable = "item_table";
+const selectedItemTable = "selected_item_table";
+const selectedItemColId = "selected_col_id";
 
 // Room table variables
 const roomColId = "room_col_id";
@@ -21,6 +23,7 @@ const cCubicFeet = "c_cubic_feet";
 const cWeight = "c_weight";
 const groupNameId = "group_name_id";
 const density = "density";
+const itemQuantity = "quantity";
 
 // Shared preference key
 const isDatabaseAdded = "is_database_added";
@@ -36,3 +39,7 @@ const noData = "No Internet";
 const rooms = "Rooms";
 const items = "Items";
 const search = "Search";
+const item = "Item";
+const quantity = "Qty";
+const calculate = "Calculated(LBS)";
+const save = "Save";

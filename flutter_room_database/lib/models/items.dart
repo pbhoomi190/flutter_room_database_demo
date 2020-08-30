@@ -7,6 +7,7 @@ class Items {
   String groupNameId;
   String density;
   String roomId = "";
+  bool isSelected = false;
 
   Items(
       {this.cId,
